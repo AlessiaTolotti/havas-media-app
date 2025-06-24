@@ -5,52 +5,52 @@ import { useRouter } from "next/navigation"
 
 
 
-export default function Caricamento() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
-  const [scelta, setScelta] = useState(false)
-  const [lavoroPath, setLavoroPath] = useState("")
-  const [dizionarioPath, setDizionarioPath] = useState("")
-  const [anteprima, setAnteprima] = useState<string>("")
-  const [sheetNames, setSheetNames] = useState<string[]>([])
-  const [sheetName, setSheetName] = useState("")
-  const [colonne, setColonne] = useState<string[]>([])
+export default function Caricamento() { // Componente principale per la pagina di caricamento
+  const router = useRouter() // Hook per la navigazione
+  const [loading, setLoading] = useState(false) // Stato di caricamento
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]) // Lista dei file caricati
+  const [scelta, setScelta] = useState(false) // Stato di scelta di file lavoro e dizionario 
+  const [lavoroPath, setLavoroPath] = useState("") // Percorso del file lavoro 
+  const [dizionarioPath, setDizionarioPath] = useState("")  // Percorso del file dizionario 
+  const [anteprima, setAnteprima] = useState<string>("") // Anteprima dell'anteprima
+  const [sheetNames, setSheetNames] = useState<string[]>([]) // Lista delle fogli
+  const [sheetName, setSheetName] = useState("") // Foglio selezionato 
+  const [colonne, setColonne] = useState<string[]>([]) // Lista delle colonne
 
-  useEffect(() => {
-    setUploadedFiles(["file1.xlsx", "file2.xlsx", "dizionario.xlsx"])
+  useEffect(() => { // Effettua il caricamento dei file al caricamento della pagina   
+    setUploadedFiles(["file1.xlsx", "file2.xlsx", "dizionario.xlsx"]) // Imposta la lista dei file caricati 
   }, [])
 
-  const handleFileSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  const handleFileSubmit = (e: FormEvent) => { // Funzione per gestire il submit del form (invio del file)
+    e.preventDefault() // Evita il comportamento predefinito del form
+    setLoading(true) // Imposta il caricamento
 
-    setTimeout(() => {
-      setScelta(true)
-      setLavoroPath("uploads/file_lavoro.xlsx")
-      setDizionarioPath("uploads/dizionario.xlsx")
-      setSheetNames(["Foglio1", "Foglio2", "Foglio3"])
+    setTimeout(() => { // Imposta il caricamento come false dopo un breve ritardo
+      setScelta(true) // Imposta lo stato di scelta come true se il caricamento è andato a buon fine
+      setLavoroPath("uploads/file_lavoro.xlsx") // Imposta il percorso del file lavoro
+      setDizionarioPath("uploads/dizionario.xlsx") // Imposta il percorso del file dizionario 
+      setSheetNames(["Foglio1", "Foglio2", "Foglio3"]) // Imposta la lista delle fogli 
       setSheetName("Foglio1")
       setColonne(["Colonna1", "Colonna2", "Colonna3"])
       setAnteprima(
         '<table style="width:100%;border-collapse:collapse;margin:20px 0;"><tr style="background:#f8f9fa;"><th style="padding:12px;border:1px solid #dee2e6;text-align:left;">ID</th><th style="padding:12px;border:1px solid #dee2e6;text-align:left;">Colonna1</th><th style="padding:12px;border:1px solid #dee2e6;text-align:left;">Colonna2</th></tr><tr><td style="padding:12px;border:1px solid #dee2e6;">1</td><td style="padding:12px;border:1px solid #dee2e6;">Valore1</td><td style="padding:12px;border:1px solid #dee2e6;">Valore2</td></tr></table>',
       )
-      setLoading(false)
+      setLoading(false) 
     }, 1000)
   }
 
-  const handleSheetChange = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoading(true)
-    const target = e.currentTarget
-    const selectedSheet = (target.elements.namedItem("sheet_name") as HTMLSelectElement).value
-    setTimeout(() => {
+  const handleSheetChange = (e: FormEvent<HTMLFormElement>) => { // Funzione per gestire il cambio di foglio 
+    e.preventDefault() 
+    setLoading(true) 
+    const target = e.currentTarget 
+    const selectedSheet = (target.elements.namedItem("sheet_name") as HTMLSelectElement).value // Ottiene il foglio selezionato dal form
+    setTimeout(() => { 
       setSheetName(selectedSheet)
       setLoading(false)
     }, 500)
   }
 
-  const handleColumnConfirm = (e: FormEvent) => {
+  const handleColumnConfirm = (e: FormEvent) => { // Funzione per gestire la conferma delle colonne 
     e.preventDefault()
     setLoading(true)
     setTimeout(() => {
@@ -59,7 +59,7 @@ export default function Caricamento() {
     }, 500)
   }
 
-  const handleDeleteFile = (filename: string) => {
+  const handleDeleteFile = (filename: string) => { // Funzione per gestire la cancellazione di un file
     if (confirm(`Sicuro di voler eliminare ${filename}?`)) {
       setUploadedFiles(uploadedFiles.filter((f) => f !== filename))
     }

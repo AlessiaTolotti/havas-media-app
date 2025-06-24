@@ -1,32 +1,33 @@
 "use client"
 
 import { useState, type FormEvent } from "react"
-import { useRouter } from "next/navigation"
-import { fetchLogin } from "../../lib/fetchLogin" 
+import { useRouter } from "next/navigation" //importa i dati delle pagine di navigazione 
+import { fetchLogin } from "../../lib/fetchLogin" //hook per gestire lo stato
 
+//componente principale pagina di login
 export default function Login() {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [username, setUsername] = useState("") //stato per l'username
+  const [password, setPassword] = useState("") //stato per la password
+  const [error, setError] = useState("") //stato per l'errore
+  const [isLoading, setIsLoading] = useState(false) //stato per il caricamento
+  const router = useRouter() //hook per la navigazione
 
-const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError("");
+const handleSubmit = async (e: FormEvent) => { //funzione per gestire il submit (invio)
+  e.preventDefault(); //evita il comportamento predefinito del form
+  setIsLoading(true); //imposta il caricamento
+  setError(""); //imposta l'errore come stringa vuota
 
   try {
-    const data = await fetchLogin(username, password);
-    console.log("Risposta backend:", data.ciao);
+    const data = await fetchLogin(username, password); //invia la richiesta di login
+    console.log("Risposta backend:", data.ciao); //stampa il contenuto della risposta
 
     if (1) {
-      router.push("/caricamento");
+      router.push("/caricamento"); 
     } else {
       setError(data.message || "Login fallito");
     }
   } catch (error) {
-    setError("Errore di rete o server");
+    setError("Errore di rete o server"); //imposta l'errore in caso di errore nella richiesta di login 
     console.error(error);
   } finally {
     setIsLoading(false);

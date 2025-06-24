@@ -3,18 +3,18 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 
-export default function RisultatoPage() {
-  const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({
-    lavoro: "/uploads/file_lavoro_modificato.xlsx",
-    dizionario: "/uploads/dizionario_aggiornato.xlsx",
-    tempo: "3.5",
+export default function RisultatoPage() { // Componente principale per la pagina di risultati 
+  const [loading, setLoading] = useState(true) // Stato di caricamento
+  const [stats, setStats] = useState({ // Statistiche di elaborazione 
+    lavoro: "/uploads/file_lavoro_modificato.xlsx", // Percorso del file lavoro
+    dizionario: "/uploads/dizionario_aggiornato.xlsx", // Percorso del file dizionario
+    tempo: "3.5", 
     trovati: "42",
     sostituzioni: "15",
     aggiunte_vocab: "8",
   })
 
-  useEffect(() => {
+  useEffect(() => { // Effettua il caricamento dei dati al caricamento della pagina
     console.log("🔍 Caricando risultati...")
 
     // Carica dati da sessionStorage se disponibili

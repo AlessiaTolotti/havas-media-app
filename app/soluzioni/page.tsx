@@ -11,7 +11,7 @@ interface Suggerimento {
   confidence: number
 }
 
-interface ElementoNonTrovato {
+interface ElementoNonTrovato { 
   originalValue: string
   suggerimenti: Suggerimento[]
   context?: string
@@ -66,7 +66,7 @@ function SoluzioniContent() {
     elementiNonTrovati: 0,
     percentualeTrovati: 0,
   })
-  const [fileInfo, setFileInfo] = useState({
+  const [fileInfo, setFileInfo] = useState({ // Aggiungi stato per fileInfo
     lavoroPath: "",
     dizionarioPath: "",
     colonna: "",
