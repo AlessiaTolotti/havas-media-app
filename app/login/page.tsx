@@ -27,7 +27,7 @@ const handleSubmit = async (e: FormEvent) => { //funzione per gestire il submit 
       setError(data.message || "Login fallito");
     }
   } catch (error) {
-    setError("Errore di rete o server"); //imposta l'errore in caso di errore nella richiesta di login 
+    setError("Errore di rete o server"); //imposta l'errore in caso di errore nella richiesta
     console.error(error);
   } finally {
     setIsLoading(false);
