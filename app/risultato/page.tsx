@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import Link from "next/link"
 
-export default function Risultato() {
-  const router = useRouter()
+export default function RisultatoPage() {
+  const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
     lavoro: "/uploads/file_lavoro_modificato.xlsx",
     dizionario: "/uploads/dizionario_aggiornato.xlsx",
@@ -14,9 +14,37 @@ export default function Risultato() {
     aggiunte_vocab: "8",
   })
 
-  const handleGoHome = () => {
-    router.push("/login")
-  }
+  useEffect(() => {
+    console.log("🔍 Caricando risultati...")
+
+    // Carica dati da sessionStorage se disponibili
+    if (typeof window !== "undefined") {
+      const savedData = sessionStorage.getItem("processing_result")
+
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData)
+          console.log("✅ Dati caricati:", parsedData)
+
+          // Aggiorna stats con i dati reali se disponibili
+          if (parsedData.statistiche) {
+            setStats({
+              lavoro: parsedData.fileElaborato?.url || "/uploads/file_lavoro_modificato.xlsx",
+              dizionario: parsedData.dizionarioAggiornato?.url || "/uploads/dizionario_aggiornato.xlsx",
+              tempo: parsedData.statistiche.tempoElaborazione?.toString() || "3.5",
+              trovati: parsedData.statistiche.elementiTrovati?.toString() || "42",
+              sostituzioni: parsedData.statistiche.sostituzioniApplicate?.toString() || "15",
+              aggiunte_vocab: parsedData.statistiche.nuoviTerminiAggiunti?.toString() || "8",
+            })
+          }
+        } catch (error) {
+          console.error("❌ Errore parsing dati:", error)
+        }
+      }
+    }
+
+    setLoading(false)
+  }, [])
 
   const styles = {
     container: {
@@ -56,9 +84,7 @@ export default function Risultato() {
       borderRadius: "20px",
       padding: "40px",
       boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
-      borderWidth: "1px",
-      borderStyle: "solid",
-      borderColor: "#e2e8f0",
+      border: "1px solid #e2e8f0",
     },
     downloadSection: {
       marginBottom: "40px",
@@ -77,9 +103,7 @@ export default function Risultato() {
       backgroundColor: "#f8f9fa",
       borderRadius: "12px",
       marginBottom: "15px",
-      borderWidth: "1px",
-      borderStyle: "solid",
-      borderColor: "#e2e8f0",
+      border: "1px solid #e2e8f0",
     },
     downloadLabel: {
       fontSize: "1rem",
@@ -98,15 +122,11 @@ export default function Risultato() {
       display: "inline-flex",
       alignItems: "center",
       gap: "8px",
-      border: "none",
-      cursor: "pointer",
     },
     divider: {
       height: "2px",
       background: "linear-gradient(90deg, #e2e8f0 0%, #cbd5e0 50%, #e2e8f0 100%)",
-      borderWidth: "0",
-      borderStyle: "none",
-      borderColor: "transparent",
+      border: "none",
       margin: "40px 0",
       borderRadius: "1px",
     },
@@ -129,9 +149,7 @@ export default function Risultato() {
       backgroundColor: "#f8f9fa",
       padding: "25px",
       borderRadius: "12px",
-      borderWidth: "1px",
-      borderStyle: "solid",
-      borderColor: "#e2e8f0",
+      border: "1px solid #e2e8f0",
       textAlign: "center" as const,
       transition: "all 0.3s ease",
     },
@@ -157,15 +175,57 @@ export default function Risultato() {
       gap: "10px",
       backgroundColor: "#48bb78",
       color: "white",
-      border: "none",
+      textDecoration: "none",
       padding: "15px 30px",
       borderRadius: "12px",
       fontSize: "1.1rem",
       fontWeight: "600",
-      cursor: "pointer",
       transition: "all 0.3s ease",
       boxShadow: "0 4px 15px rgba(72, 187, 120, 0.3)",
     },
+    loader: {
+      display: loading ? "flex" : "none",
+      position: "fixed" as const,
+      top: "0",
+      left: "0",
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9999,
+    },
+    loaderContent: {
+      backgroundColor: "white",
+      padding: "40px 60px",
+      borderRadius: "16px",
+      display: "flex",
+      alignItems: "center",
+      gap: "20px",
+      fontSize: "1.2rem",
+      fontWeight: "600",
+    },
+    spinner: {
+      width: "30px",
+      height: "30px",
+      border: "3px solid #e2e8f0",
+      borderTop: "3px solid #48bb78",
+      borderRadius: "50%",
+      animation: "spin 1s linear infinite",
+    },
+  }
+
+  if (loading) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.loader}>
+          <div style={styles.loaderContent}>
+            <div style={styles.spinner}></div>
+            <span>Caricamento risultati...</span>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -295,8 +355,8 @@ export default function Risultato() {
               </div>
             </div>
 
-            <button
-              onClick={handleGoHome}
+            <Link
+              href="/"
               style={styles.homeButton}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "#38a169"
@@ -311,10 +371,17 @@ export default function Risultato() {
             >
               <span>🔄</span>
               Torna all'inizio
-            </button>
+            </Link>
           </div>
         </div>
       </main>
+
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }

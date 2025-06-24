@@ -3,6 +3,8 @@
 import { useState, type FormEvent, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
+
+
 export default function Caricamento() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -37,11 +39,13 @@ export default function Caricamento() {
     }, 1000)
   }
 
-  const handleSheetChange = (e: FormEvent) => {
+  const handleSheetChange = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
+    const target = e.currentTarget
+    const selectedSheet = (target.elements.namedItem("sheet_name") as HTMLSelectElement).value
     setTimeout(() => {
-      setSheetName((e.target as HTMLFormElement).sheet_name.value)
+      setSheetName(selectedSheet)
       setLoading(false)
     }, 500)
   }
@@ -60,6 +64,7 @@ export default function Caricamento() {
       setUploadedFiles(uploadedFiles.filter((f) => f !== filename))
     }
   }
+
 
   const styles = {
     container: {

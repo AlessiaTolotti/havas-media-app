@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
+import { fetchLogin } from "../../lib/fetchLogin" 
 
 export default function Login() {
   const [username, setUsername] = useState("")
@@ -10,21 +11,27 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError("");
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  try {
+    const data = await fetchLogin(username, password);
+    console.log("Risposta backend:", data.ciao);
 
-    if (username === "admin" && password === "password") {
-      router.push("/caricamento")
+    if (1) {
+      router.push("/caricamento");
     } else {
-      setError("Username o password non validi")
+      setError(data.message || "Login fallito");
     }
-    setIsLoading(false)
+  } catch (error) {
+    setError("Errore di rete o server");
+    console.error(error);
+  } finally {
+    setIsLoading(false);
   }
-
+}
   const styles = {
     container: {
       minHeight: "100vh",
