@@ -89,7 +89,7 @@ function SoluzioniContent() {
     }).then((res) => res.json())
   }
 
-  const applicaSostituzioni = async (sostituzioni: any) => {
+  const applicaSostituzioni = async (sostituzioni: any) => { // Aggiungi il tipo di sostituzioni come parametro della funzione 
     return await fetch(`${API_BASE_URL}/api/caricamento/applica-sostituzioni`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -103,7 +103,7 @@ function SoluzioniContent() {
     setError(null)
 
     try {
-      // Ottieni parametri SOLO da sessionStorage per ora
+      // Ottieni parametri SOLO da sessionStorage per ora perché non ci sono searchParams e non ci sono dati in URL
       const lavoroPath = (typeof window !== "undefined" ? sessionStorage.getItem("lavoro_path") : "") || ""
       const dizionarioPath = (typeof window !== "undefined" ? sessionStorage.getItem("dizionario_path") : "") || ""
       const colonna = (typeof window !== "undefined" ? sessionStorage.getItem("colonna") : "") || ""
