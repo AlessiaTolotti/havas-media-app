@@ -1,38 +1,38 @@
 "use client"
 
 import { useState, type FormEvent } from "react"
-import { useRouter } from "next/navigation" //importa i dati delle pagine di navigazione 
-import { fetchLogin } from "../../lib/fetchLogin" //hook per gestire lo stato
+import { useRouter } from "next/navigation"
+import { fetchLogin } from "../../lib/fetchLogin"
 
-//componente principale pagina di login
 export default function Login() {
-  const [username, setUsername] = useState("") //stato per l'username
-  const [password, setPassword] = useState("") //stato per la password
-  const [error, setError] = useState("") //stato per l'errore
-  const [isLoading, setIsLoading] = useState(false) //stato per il caricamento
-  const router = useRouter() //hook per la navigazione
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-const handleSubmit = async (e: FormEvent) => { //funzione per gestire il submit (invio)
-  e.preventDefault(); //evita il comportamento predefinito del form
-  setIsLoading(true); //imposta il caricamento
-  setError(""); //imposta l'errore come stringa vuota
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError("")
 
-  try {
-    const data = await fetchLogin(username, password); //invia la richiesta di login
-    console.log("Risposta backend:", data.ciao); //stampa il contenuto della risposta
+    try {
+      const data = await fetchLogin(username, password)
+      console.log("Risposta backend:", data)
 
-    if (1) {
-      router.push("/caricamento"); 
-    } else {
-      setError(data.message || "Login fallito");
+      if (data.result === true) {
+        router.push("/caricamento")
+      } else {
+        setError(data.message || "Login fallito")
+      }
+    } catch (error) {
+      setError("Errore di rete o server")
+      console.error(error)
+    } finally {
+      setIsLoading(false)
     }
-  } catch (error) {
-    setError("Errore di rete o server"); //imposta l'errore in caso di errore nella richiesta
-    console.error(error);
-  } finally {
-    setIsLoading(false);
   }
-}
+
   const styles = {
     container: {
       minHeight: "100vh",
