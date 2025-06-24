@@ -4,23 +4,15 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
-// 🎯 IMPORT CON PATH RELATIVO (fallback se @ non funziona)
-import {
-  getSuggerimenti,
-  applicaSostituzioni,
-  validaSostituzioni,
-  type SuggerimentiResponse,
-  type ElementoNonTrovato,
-  type Sostituzioni,
-  type SostituzioneConfig,
-} from '../../lib/fetchSoluzioni';
+// 🎯 IMPORT DIRETTI (senza alias) - CORRETTO
+import { getSuggerimenti, applicaSostituzioni, validaSostituzioni } from "../../lib/fetchSoluzioni"
 
 export default function SoluzioniPage() {
   const router = useRouter()
 
   // 📊 STATI PER I DATI API
-  const [suggerimenti, setSuggerimenti] = useState<ElementoNonTrovato[]>([])
-  const [sostituzioni, setSostituzioni] = useState<Sostituzioni>({})
+  const [suggerimenti, setSuggerimenti] = useState<any[]>([])
+  const [sostituzioni, setSostituzioni] = useState<any>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [statistiche, setStatistiche] = useState<any>(null)
@@ -37,7 +29,7 @@ export default function SoluzioniPage() {
 
     try {
       // 🎯 USA IL TUO FETCH!
-      const response: SuggerimentiResponse = await getSuggerimenti(
+      const response = await getSuggerimenti(
         "uploads/file_lavoro.xlsx", // Questi valori li prendi da sessionStorage o props
         "uploads/dizionario.xlsx",
         "Brand",
@@ -78,8 +70,8 @@ export default function SoluzioniPage() {
   }
 
   // ⚙️ GESTISCE LA SCELTA DELL'UTENTE
-  const handleSceltaSostituzione = (originalValue: string, config: SostituzioneConfig) => {
-    setSostituzioni((prev: Sostituzioni) => ({
+  const handleSceltaSostituzione = (originalValue: string, config: any) => {
+    setSostituzioni((prev: any) => ({
       ...prev,
       [originalValue]: config,
     }))
@@ -92,13 +84,13 @@ export default function SoluzioniPage() {
 
     try {
       // 🛡️ VALIDA PRIMA DI APPLICARE
-      const validazione = await validaSostituzioni({
-        lavoroPath: "uploads/file_lavoro.xlsx",
-        dizionarioPath: "uploads/dizionario.xlsx",
-        colonna: "Brand",
-        foglio: "Foglio1",
+      const validazione = await validaSostituzioni(
+        "uploads/file_lavoro.xlsx",
+        "uploads/dizionario.xlsx",
+        "Brand",
+        "Foglio1",
         sostituzioni,
-      })
+      )
 
       if (!validazione.valid) {
         setError(`Errori di validazione: ${validazione.errors.join(", ")}`)
@@ -106,13 +98,13 @@ export default function SoluzioniPage() {
       }
 
       // 🎯 APPLICA LE SOSTITUZIONI
-      const response = await applicaSostituzioni({
-        lavoroPath: "uploads/file_lavoro.xlsx",
-        dizionarioPath: "uploads/dizionario.xlsx",
-        colonna: "Brand",
-        foglio: "Foglio1",
+      const response = await applicaSostituzioni(
+        "uploads/file_lavoro.xlsx",
+        "uploads/dizionario.xlsx",
+        "Brand",
+        "Foglio1",
         sostituzioni,
-      })
+      )
 
       if (response.success) {
         // 💾 SALVA IL JOB ID PER LA PAGINA RISULTATO
@@ -211,7 +203,7 @@ export default function SoluzioniPage() {
 
         <h2>🔍 Elementi da sostituire</h2>
 
-        {suggerimenti.map((elemento: ElementoNonTrovato, index: number) => (
+        {suggerimenti.map((elemento: any, index: number) => (
           <div
             key={index}
             style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "20px", marginBottom: "20px" }}

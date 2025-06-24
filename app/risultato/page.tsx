@@ -3,19 +3,12 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 
-// 🎯 IMPORT CON PATH RELATIVO (fallback se @ non funziona)
-import {
-  getRisultato,
-  downloadFile,
-  generaReport,
-  salvaRisultato,
-  type RisultatoElaborazione,
-  type DownloadRequest,
-}  from "../../lib/fetchRisultato"
+// 🎯 IMPORT DIRETTI (senza alias) - CORRETTO
+import { getRisultato, downloadFile, generaReport, salvaRisultato } from "../../lib/fetchRisultato"
 
 export default function RisultatoPage() {
   // 📊 STATI PER I DATI API
-  const [risultato, setRisultato] = useState<RisultatoElaborazione | null>(null)
+  const [risultato, setRisultato] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [downloading, setDownloading] = useState<string | null>(null)
@@ -35,7 +28,7 @@ export default function RisultatoPage() {
       const jobId = sessionStorage.getItem("jobId") || "mock-job-123"
 
       // 🎯 USA IL TUO FETCH!
-      const response: RisultatoElaborazione = await getRisultato(jobId)
+      const response = await getRisultato(jobId)
 
       if (response.success) {
         setRisultato(response)
@@ -46,7 +39,7 @@ export default function RisultatoPage() {
       setError(err instanceof Error ? err.message : "Errore sconosciuto")
 
       // 🔄 FALLBACK CON DATI MOCK
-      const mockRisultato: RisultatoElaborazione = {
+      const mockRisultato: any = {
         success: true,
         data: {
           fileElaborato: {
@@ -97,7 +90,7 @@ export default function RisultatoPage() {
     try {
       if (fileType === "report") {
         // 📊 GENERA E SCARICA REPORT
-        const reportResponse = await generaReport(risultato.data.dettagliElaborazione.jobId, "pdf", true)
+        const reportResponse = await generaReport(risultato.data.dettagliElaborazione.jobId, "pdf")
 
         if (reportResponse.success) {
           // 🔗 APRI IL LINK DI DOWNLOAD
@@ -105,13 +98,7 @@ export default function RisultatoPage() {
         }
       } else {
         // 📁 SCARICA FILE ELABORATO O DIZIONARIO
-        const downloadRequest: DownloadRequest = {
-          jobId: risultato.data.dettagliElaborazione.jobId,
-          fileType: fileType,
-          formato: "xlsx",
-        }
-
-        const downloadResponse = await downloadFile(downloadRequest)
+        const downloadResponse = await downloadFile(risultato.data.dettagliElaborazione.jobId, fileType)
 
         if (downloadResponse.success) {
           // 🔗 APRI IL LINK DI DOWNLOAD
@@ -134,12 +121,7 @@ export default function RisultatoPage() {
     if (!risultato) return
 
     try {
-      await salvaRisultato({
-        jobId: risultato.data.dettagliElaborazione.jobId,
-        nomeProgetto: `Elaborazione ${new Date().toLocaleDateString()}`,
-        descrizione: `Elaborazione colonna ${risultato.data.dettagliElaborazione.colonna}`,
-        tags: ["brand", "normalizzazione"],
-      })
+      await salvaRisultato(risultato.data.dettagliElaborazione.jobId, `Elaborazione ${new Date().toLocaleDateString()}`)
 
       alert("✅ Risultati salvati nello storico!")
     } catch (err) {
